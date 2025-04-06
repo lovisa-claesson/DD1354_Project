@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+    <link rel="stylesheet" href="css/pico.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <title>DD1354 Project Blog</title>
+
+    <style>
+        .center {
+            text-align: center;
+        }
+
+        .bordered {
+            margin-top: 1em;
+            margin-bottom: 1em;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container">
+        <h1>DD1354 Project Blog</h1>
+
+        <!-- Article 0 -->
+        <article>
+            <h3>Update 0 - Project Planning</h3>
+            <h6>2025-02-21</h6>
+
+            <p>
+                Welcome to our DD1354 Project Blog! This series of updates will document our progress and findings as we
+                work on our project. We will share our insights, challenges, and achievements with you, our readers!
+            </p>
+
+            <figure class="center bordered">
+                <img src="public/draft.png" alt="[Placeholder alt text]">
+            </figure>
+
+            <p>
+                Our initial plan is to create a simulation of a guitar string vibrating in a particle based air
+                environment.
+                We aim to demonstrate how the air particles are influenced by the vibrations of the string.
+            </p>
+
+            <ul>
+                <li>Create Environment
+                    <ul>
+                        <li>Create Simulation environment</li>
+                    </ul>
+                </li>
+                <li>Air Simulation
+                    <ul>
+                        <li>Develop particle based fluid simulation</li>
+                        <li>Handle collisions between particles</li>
+                        <li>Adapt simulation to mimic air particles</li>
+
+                    </ul>
+                </li>
+                <li>String Integration
+                    <ul>
+                        <li>Build the string using nodes and springs</li>
+                    </ul>
+                </li>
+                <li>Collision Detection
+                    <ul>
+                        <li>Implement collision detection between string and air particles</li>
+                    </ul>
+                </li>
+
+            </ul>
+
+            <p>
+                To succeed with this project we will be going more in depth into mass-spring systems and fluid
+                simulation.
+            </p>
+        </article>
+
+        <!-- Article 1 -->
+        <article>
+            <h3>Update 1 - Fluid simulation</h3>
+            <h6>2025-02-24</h6>
+
+            <p>
+                For the first update we mostly followed the video by Sebastian Lague.
+                The fluid is affected by a "pressure force" that make the particles want to create an equal pressure
+                everywhere.
+                The pressure is calculated by using the density of particles around each particle.
+                This will then make the particles move away from areas with high density.
+                The influence a particle has on the density is calculated with smooth particle hydrodynamics.
+                <br><br>
+                To keep the fluid within the area we check if a particle is outside the bounds and put the position to
+                the bound and reverse the velocity in that case.
+                The velocity is also reduced with damping factor.
+                To make sure the fluid is affected by the rectangle we check if the particle is within the rectangle,
+                and in that case we move it to the closest side of the rectangle.
+                As with the outer bounds the velocity is reversed when the particle is within the rectangle.
+            </p>
+
+            <figure class="center bordered">
+                <iframe width="80%" height="200" src="public/Screen_Recording_2025-02-24.mp4" type="video/mp4"
+                    title="Placeholder video" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen></iframe>
+            </figure>
+
+            <p>
+                We will start working on the string, find a way to make the string particles collide with the fluid and
+                improve the current fluid.
+            </p>
+            <h4>References</h4>
+            <ul>
+                <li>Sebastian Lague, "Coding Adventure: Simulating Fluids" [<a href="https://www.youtube.com/watch?v=rSKMYc1CQHE">Video link</a>]</li>
+            </ul>
+        </article>
+
+        <!-- Article 2 -->
+        <article>
+            <h3>Update 2 - Simulating instrument string</h3>
+            <h6>2025-03-06</h6>
+
+            <p>
+                In this update, we worked on our simulation of the instrument string. We shifted our focus from the idea
+                of a mass-spring system to a digital waveguide model. From our understanding after reading up on current
+                research, mostly from Stefan Bilbao, digital waveguide-based simulations are a better option to produce
+                a realistic and stable result while maintaining low computational cost.
+            </p>
+
+            <p>
+                The classical one-dimensional wave equation is given by:
+            </p>
+
+            <p class="math">
+                μ ∂²u/∂t² - T ∂²u/∂x² = 0
+            </p>
+            <p>
+                In this equation:
+                <ul>
+                    <li><code>μ</code> (mu) is the mass per unit length of the string, representing how much mass is distributed along the string.</li>
+                    <li><code>∂²u/∂t²</code> is the second partial derivative of displacement <code>u</code> with respect to time <code>t</code>, representing the acceleration of the string.</li>
+                    <li><code>T</code> is the tension in the string, which is the force that is trying to pull the string back to its equilibrium position.</li>
+                    <li><code>∂²u/∂x²</code> is the second partial derivative of displacement <code>u</code> with respect to position <code>x</code>, representing the curvature of the string.</li>
+                    <li>The equation <code>μ ∂²u/∂t² - T ∂²u/∂x² = 0</code> describes the balance between the inertial forces (left term) and the restoring forces due to tension (right term).</li>
+                </ul>
+            </p>
+
+            <p>
+                In our current implementation:
+            </p>
+
+            <ul>
+                <li><code>String2DSimulation</code> leverages digital waveguide techniques to simulate the propagation
+                    of waves along the string.</li>
+                <li><code>stringSimulation.cs</code> has been created to handle boundary conditions and
+                    collisions.</li>
+            </ul>
+
+            <figure class="center bordered">
+                <video width="80%" height="400" controls>
+                    <source src="public/Screen_Recording_2025-03-06.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </figure>
+
+            <p>
+                Next update we will focus on integrating the string simulation with the fluid simulation. The goal is to create
+                an interactive environment where the string vibrations influence the air particles shown in the last blog
+                post.
+            </p>
+
+            <h4>References</h4>
+            <ul>
+                <li>Stefan Bilbao, Michele Ducceschi. "Models of Musical String Vibration". University of Edinburgh,
+                    University of Bologna.</li>
+            </ul>
+        </article>
+
+        <!-- Article 3 -->
+        <article>
+            <h3>Update 3 - Updating the fluid</h3>
+            <h6>2025-03-05</h6>
+            <p>
+                Since the last post on the fluid some changes have been made in accordance with the literature on the topic. We have added a visocosity force and better boundaries around the fluid. 
+                <br><br>
+                The smoothing kernels have not been explained so far so below is a picture of our current choice, the pressure kernel is in red and the viscosity kernel is in black. 
+            </p>
+            <figure class="center bordered">
+                <img src="public/smoothKernel.png" alt="[Placeholder alt text]">
+            </figure>
+
+            <p>
+                In our weakly compressible fluid the translation between density and pressure is done through this function <code>k<sub>p</sub>(ρ - ρ<sub>0</sub>)</code> 
+                where <code>k<sub>p</sub></code> is the pressure multiplier, <code>ρ</code> is the particle's density, and <code>ρ<sub>0</sub></code> is the target density of the fluid.
+            </p>
+            <p>
+                The fluid particles are now updated according to the code below. 
+            </p>
+
+            <code style="white-space: pre-wrap;">
+// Update sequence called each frame
+for (int i = 0; i < n; i++) {
+    // Predict position from current velocity
+    // Calculate the density at the predicted position
+}
+for (int i = 0; i < n; i++) {
+    // Calculate viscosity force
+    // Get viscosity acceleration
+    // Update particle velocity
+}
+for (int i = 0; i < n; i++) {
+    // Calculate pressure force
+}
+for (int i = 0; i < n; i++) {
+    // Get pressure acceleration 
+    // Update particle velocity
+    // Check that each particle is within the bounds
+}
+            </code>
+
+            <p>
+                In the video below the brown particles are used as a boundary, they each influence the pressure force on each of the fluid particles. 
+                Once the fluid has viscosity the waves that form are more visible compared to the previous fluid video. 
+            </p>
+            <figure class="center bordered">
+                <iframe width="80%" height="200" src="public/Screen_Recording_2025-03-05.mp4" type="video/mp4"
+                    title="Placeholder video" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen></iframe>
+            </figure>
+
+            <h4>References</h4>
+            <p>
+                <ul>
+                    <li>Dan Koschier et al., "Smoothed Particle Hydrodynamics" [<a href="https://sph-tutorial.physics-simulation.org/pdf/SPH_Tutorial.pdf">Link</a>]</li>
+                    <li>Matthias Müller et al., "Particle-Based Fluid Simulation for Interactive Applications" [<a href="https://matthias-research.github.io/pages/publications/sca03.pdf">Link</a>]</li>
+                    <li>M. B. Liu & G. R. Liu "Smoothed Particle Hydrodynamics (SPH): an Overview and Recent Developments" [<a href="https://link.springer.com/article/10.1007/s11831-010-9040-7">Link</a>]</li>
+                    <li>Xiaokun Wang et al., "Physics-based fluid simulation in computer graphics: Survey,
+                        research trends, and challenges" [<a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=10885003">Link</a>]</li>
+                </ul>
+            </p>
+        </article>
+
+        <!-- Article 4 -->
+        <article>
+            <h3>Update 4 - [Placeholder Title]</h3>
+            <h6>[Placeholder Date]</h6>
+
+            <blockquote>
+                [Placeholder blockquote text]
+                <footer>
+                    <cite>[Placeholder citation]</cite>
+                </footer>
+            </blockquote>
+
+            <p>
+                [Placeholder final update introduction for a concluding demonstration.]
+            </p>
+
+            <figure class="center bordered">
+                <iframe width="80%" height="400" src="https://www.youtube.com/embed/placeholder"
+                    title="Placeholder video" frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen></iframe>
+            </figure>
+
+            <p>
+                [Placeholder note regarding background music or additional media info.]
+            </p>
+
+            <p>
+                [Placeholder final comments and an overall conclusion of the series.]
+            </p>
+
+            <p>
+                [Placeholder acknowledgements and advice.]
+            </p>
+
+            <p>
+                [Placeholder references:]
+            </p>
+
+            <ul>
+                <li>[Placeholder Reference 1]</li>
+                <li>[Placeholder Reference 2]</li>
+                <li>[Placeholder Reference 3]</li>
+            </ul>
+
+            <p>
+                [Placeholder final farewell message.]
+            </p>
+        </article>
+    </main>
+</body>
+
+</html>
